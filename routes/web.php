@@ -18,3 +18,4 @@ Route::get('/', function () {
 });
 Route::get('/test', 'ApiController@test');
 Route::get('/check_token', 'ApiController@checkToken');
+Route::post('/check_token', 'ApiController@responseMsg');
