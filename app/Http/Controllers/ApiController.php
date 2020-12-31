@@ -95,7 +95,7 @@ class ApiController extends Controller
                     return '';
                 }
                 // 唤起事件
-                event(new WxOperateEvent($postObj));
+//                event(new WxOperateEvent($postObj));
 
                 switch ($RX_TYPE) {
                     case "text":
@@ -117,39 +117,9 @@ class ApiController extends Controller
                         break;
                 }
                 $time = time();
-                if (is_array($resultStr)) {
 
-                    // 获取到关键字，回复图文消息
-                    $newsTplHead = "<xml>
-                <ToUserName><![CDATA[%s]]></ToUserName>
-                <FromUserName><![CDATA[%s]]></FromUserName>
-                <CreateTime>%s</CreateTime>
-                <MsgType><![CDATA[news]]></MsgType>
-                <ArticleCount>%d</ArticleCount>
-                <Articles>";
-                    $newsTplBody = "<item>
-                <Title><![CDATA[%s]]></Title>
-                <Description><![CDATA[%s]]></Description>
-                <PicUrl><![CDATA[%s]]></PicUrl>
-                <Url><![CDATA[%s]]></Url>
-                </item>";
-                    $newsTplFoot = "</Articles>
-                </xml>";
-                    $newsTplHead = sprintf($newsTplHead, $postObj->FromUserName, $postObj->ToUserName, $time, count($resultStr));   // 限制死返回一条
-                    $body = "";
-                    foreach ($resultStr as $rekey => $revalue) {
-                        if (isset($revalue['description'])) {
-                            $revalue['description'] = str_replace("</p><p>", "\n", $revalue['description']);
-                            $revalue['description'] = str_replace([ '<p>', '</p>' ], '', $revalue['description']);
-                        } else {
-                            $revalue['description'] = '';
-                        }
-                        $body .= sprintf($newsTplBody, $revalue['title'], $revalue['description'], $revalue['image_url'], $revalue['url']);
-                    }
-                    return $newsTplHead . $body . $newsTplFoot;
-                } else {
-                    if ($resultStr) {
-                        $textTpl = "<xml>
+                if ($resultStr) {
+                    $textTpl = "<xml>
                         <ToUserName><![CDATA[%s]]></ToUserName>
                         <FromUserName><![CDATA[%s]]></FromUserName>
                         <CreateTime>%s</CreateTime>
@@ -158,10 +128,10 @@ class ApiController extends Controller
                         <FuncFlag>0</FuncFlag>
                         </xml>";
 
-                        $resultStr = sprintf($textTpl, $postObj->FromUserName, $postObj->ToUserName, $time, $resultStr);
-                        return $resultStr;
-                    }
+                    $resultStr = sprintf($textTpl, $postObj->FromUserName, $postObj->ToUserName, $time, $resultStr);
+                    return $resultStr;
                 }
+
             } catch (\Exception $e) {
                 return '';
             }
