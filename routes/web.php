@@ -13,8 +13,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
 Route::get('/test', 'ApiController@test');
-Route::get('/check_token', 'ApiController@checkToken');
+Route::get('/', 'ApiController@checkToken');
