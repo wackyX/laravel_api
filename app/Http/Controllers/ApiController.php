@@ -128,7 +128,7 @@ class ApiController extends Controller
     public function taokouling($str)
     {
         include "../../lib/PHPSDK/ApiSdk.php";
-        $c = new CheckSign;
+        $c = new \CheckSign();
         //接口地址 必填
         $c->host = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
         //appKey  必填
