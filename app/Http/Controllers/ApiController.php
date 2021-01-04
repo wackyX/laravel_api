@@ -137,7 +137,7 @@ class ApiController extends Controller
     {
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
-
+        Log::info($str);
         return $str;
     }
 
