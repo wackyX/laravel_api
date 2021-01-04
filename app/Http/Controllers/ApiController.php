@@ -128,6 +128,11 @@ class ApiController extends Controller
     public function taokouling($str)
     {
         $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling ';
+        $data = [
+            'appKey'=>env('TAOKOULING_API_KEY'),
+            'version'=>1,
+        ];
+        $data['sign'] = $this->makeSignDataoke($data,env('TAOKOULING_API_SECRET'));
         $url .= '?apikey=' . env('TAOKOULING_API_KEY') . '&version= v1.0.0&content=' . $str;
         $res = $this->requestUrl($url);
         return $res;
@@ -192,5 +197,18 @@ class ApiController extends Controller
         }
 
         return mb_substr($str, $start, $length - $start, $encoding);
+    }
+
+    private function makeSignDataoke($data, $appSecret)
+    {
+        ksort($data);
+        $str = '';
+        foreach ($data as $k => $v) {
+
+            $str .= '&' . $k . '=' . $v;
+        }
+        $str = trim($str, '&');
+        $sign = strtoupper(md5($str . '&key=' . $appSecret));
+        return $sign;
     }
 }
