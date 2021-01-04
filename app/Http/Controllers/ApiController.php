@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class ApiController extends Controller
@@ -101,14 +102,6 @@ class ApiController extends Controller
                     case "text":
                         $resultStr = $this->receiveText($postObj);
                         break;
-                    case "image":
-//                    $resultStr = $this->receiveImage($postObj);
-                        $resultStr = '暂不支持图片消息';
-                        break;
-                    case "voice":
-//                    $resultStr = $this->receiveVoice($postObj);
-                        $resultStr = '暂不支持语音消息';
-                        break;
                     case "event":
                         $resultStr = $this->receiveEvent($postObj);
                         break;
@@ -117,7 +110,7 @@ class ApiController extends Controller
                         break;
                 }
                 $time = time();
-
+                Log::info($resultStr);
                 if ($resultStr) {
                     $textTpl = "<xml>
                         <ToUserName><![CDATA[%s]]></ToUserName>
@@ -150,8 +143,6 @@ class ApiController extends Controller
     private function receiveEvent($postObj)
     {
         $event = $postObj->Event;
-
-
         // 用户关注公众号 补全/注册用户信息,添加统计
         if ($event == 'subscribe') {
             $str = '欢迎关注';
