@@ -129,11 +129,12 @@ class ApiController extends Controller
     {
         $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
         $data = [
-            'appKey'=>env('TAOKOULING_API_KEY'),
-            'version'=>1,
+            'appKey'  => env('TAOKOULING_API_KEY'),
+            'version' => 1,
+            'content' => $str
         ];
-        $data['sign'] = $this->makeSignDataoke($data,env('TAOKOULING_API_SECRET'));
-        $url = $url .'?'. http_build_query($data);
+        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
+        $url = $url . '?' . http_build_query($data);
         $res = $this->requestUrl($url);
         return $res;
     }
