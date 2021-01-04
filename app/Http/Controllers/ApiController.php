@@ -87,13 +87,10 @@ class ApiController extends Controller
 
     public function responseMsg()
     {
-        Log::info('微信回传用户事件');
         $postStr = file_get_contents('php://input');
         if (!empty($postStr)) {
             try {
-                Log::info($postStr);
                 $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-                Log::info(json_decode(json_encode($postObj),true));
                 $RX_TYPE = trim($postObj->MsgType);
 
                 if (($RX_TYPE == 'event') && (strtoupper((string)$postObj->Event) == 'TEMPLATESENDJOBFINISH')) {
@@ -139,7 +136,6 @@ class ApiController extends Controller
     {
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
-        Log::info($str);
         return $str;
     }
 
