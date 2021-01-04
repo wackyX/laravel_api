@@ -98,7 +98,7 @@ class ApiController extends Controller
                     return '';
                 }
                 // 唤起事件
-                event(new WxOperateEvent($postObj));
+               // event(new WxOperateEvent($postObj));
                 Log::info(1);
                 switch ($RX_TYPE) {
                     case "text":
