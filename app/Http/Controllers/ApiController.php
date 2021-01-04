@@ -92,6 +92,7 @@ class ApiController extends Controller
         if (!empty($postStr)) {
             try {
                 $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+                Log::info('postobj'.$postObj);
                 $RX_TYPE = trim($postObj->MsgType);
 
                 if (($RX_TYPE == 'event') && (strtoupper((string)$postObj->Event) == 'TEMPLATESENDJOBFINISH')) {
