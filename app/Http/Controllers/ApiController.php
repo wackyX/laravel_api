@@ -99,7 +99,7 @@ class ApiController extends Controller
                 }
                 // 唤起事件
                // event(new WxOperateEvent($postObj));
-                Log::info(1);
+                Log::info($RX_TYPE);
                 switch ($RX_TYPE) {
                     case "text":
                         $resultStr = $this->receiveText($postObj);
