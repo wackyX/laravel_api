@@ -14,6 +14,7 @@ class ApiController extends Controller
 
     public function test()
     {
+        Log::info('123');
         dd('success');
     }
 
