@@ -98,7 +98,7 @@ class ApiController extends Controller
                 }
                 // 唤起事件
                 event(new WxOperateEvent($postObj));
-
+                Log::info(1);
                 switch ($RX_TYPE) {
                     case "text":
                         $resultStr = $this->receiveText($postObj);
@@ -111,7 +111,6 @@ class ApiController extends Controller
                         break;
                 }
                 $time = time();
-                Log::info($resultStr);
                 if ($resultStr) {
                     $textTpl = "<xml>
                         <ToUserName><![CDATA[%s]]></ToUserName>
