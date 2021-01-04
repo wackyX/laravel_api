@@ -127,15 +127,24 @@ class ApiController extends Controller
 
     public function taokouling($str)
     {
-        $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
-        $data = [
-            'appKey'  => env('TAOKOULING_API_KEY'),
-            'version' => 1,
-        ];
-        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
-        $url = $url . '?' . http_build_query($data) . '&content=' . $str;
-        $res = $this->requestUrl($url);
-        return $res;
+        include "ApiSdk.php";
+        $c = new CheckSign;
+        //接口地址 必填
+        $c->host = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
+        //appKey  必填
+        $c->appKey = env('TAOKOULING_API_KEY');
+        //appSecret  必填
+        $c->appSecret = env('TAOKOULING_API_SECRET');
+        //版本号  必填
+        $c->version = 'v1.0.2';
+        //其他请求参数 根据接口文档需求选填
+        $params = array( 'content' => $str );
+        $params['pageSize'] = 100;
+        $params['pageId'] = 1;
+        //$request = $c->request($parame,'POST'); //接口特别说明需要POST请求才使用
+        $request = $c->request($params);
+
+        return $request;
     }
 
     public function requestUrl($url, $flag = 0, $type = 0, $post_data = array(), $headers = array())
