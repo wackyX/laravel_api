@@ -91,6 +91,7 @@ class ApiController extends Controller
         $postStr = file_get_contents('php://input');
         if (!empty($postStr)) {
             try {
+                Log::info($postStr);
                 $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
                 Log::info('postobj'.$postObj);
                 $RX_TYPE = trim($postObj->MsgType);
