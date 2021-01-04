@@ -17,5 +17,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/test', 'ApiController@test');
-Route::get('/check_token', 'ApiController@checkToken');
-Route::post('/check_token', 'ApiController@responseMsg');
+Route::get('/mp/index', 'ApiController@checkToken');
+Route::post('/mp/index', 'ApiController@responseMsg');
