@@ -93,7 +93,7 @@ class ApiController extends Controller
             try {
                 Log::info($postStr);
                 $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-                Log::info(json_decode($postObj,true));
+                Log::info(json_decode(json_encode($postObj),true));
                 $RX_TYPE = trim($postObj->MsgType);
 
                 if (($RX_TYPE == 'event') && (strtoupper((string)$postObj->Event) == 'TEMPLATESENDJOBFINISH')) {
