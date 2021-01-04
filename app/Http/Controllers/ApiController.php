@@ -109,8 +109,8 @@ class ApiController extends Controller
     {
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
-        $str = $this->strCutByStr($str, '￥', '￥');
-        $res = $this->taokouling('￥' . $str . '￥');
+
+        $res = $this->taokouling($str);
         Log::info($res);
         return $str;
     }
