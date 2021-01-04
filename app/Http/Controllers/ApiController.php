@@ -87,6 +87,7 @@ class ApiController extends Controller
 
     public function responseMsg()
     {
+        Log::info('微信回传用户事件');
         $postStr = file_get_contents('php://input');
         if (!empty($postStr)) {
             try {
