@@ -129,7 +129,8 @@ class ApiController extends Controller
     {
         $url = 'https://api.taokouling.com/tkl/tkljm';
         $url .= '?apikey=' . env('TAOKOULING_API_KEY') . '&tkl=' . $str;
-        $res = requestUrl($url);
+        $res = $this->requestUrl($url);
+        return $res;
     }
 
     public function requestUrl($url, $flag = 0, $type = 0, $post_data = array(), $headers = array())
