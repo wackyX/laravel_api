@@ -21,7 +21,7 @@ class ApiController extends Controller
     public function checkToken()
     {
         header("Content-type: text/html; charset=utf-8");
-
+        Log::info('32');
         //1.将timestamp,nonce,toke按字典顺序排序
         $timestamp = $_GET['timestamp'];
         $nonce = $_GET['nonce'];
