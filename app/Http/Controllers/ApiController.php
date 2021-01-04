@@ -127,7 +127,7 @@ class ApiController extends Controller
 
     public function taokouling($str)
     {
-        $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling ';
+        $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
         $data = [
             'appKey'=>env('TAOKOULING_API_KEY'),
             'version'=>1,
