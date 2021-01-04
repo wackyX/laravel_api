@@ -131,10 +131,9 @@ class ApiController extends Controller
         $data = [
             'appKey'  => env('TAOKOULING_API_KEY'),
             'version' => 1,
-            'content' => $str
         ];
         $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
-        $url = $url . '?' . http_build_query($data);
+        $url = $url . '?' . http_build_query($data) . '&content=' . $str;
         $res = $this->requestUrl($url);
         return $res;
     }
