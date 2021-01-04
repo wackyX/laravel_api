@@ -87,6 +87,17 @@ class ApiController extends Controller
 
     public function responseMsg()
     {
+        $textTpl = "<xml>
+                        <ToUserName><![CDATA[%s]]></ToUserName>
+                        <FromUserName><![CDATA[%s]]></FromUserName>
+                        <CreateTime>%s</CreateTime>
+                        <MsgType><![CDATA[text]]></MsgType>
+                        <Content><![CDATA[%s]]></Content>
+                        <FuncFlag>0</FuncFlag>
+                        </xml>";
+
+        return $textTpl;
+
         Log::info('微信回传用户事件');
         $postStr = file_get_contents('php://input');
         if (!empty($postStr)) {
