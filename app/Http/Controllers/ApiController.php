@@ -131,7 +131,6 @@ class ApiController extends Controller
         $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
         $time = time() * 1000;
         $data = [
-            'content' => $str,
             'version' => 'v1.0.0',
             'appKey'  => env('TAOKOULING_API_KEY'),
             'nonce'   => 123456,
@@ -149,7 +148,7 @@ class ApiController extends Controller
 //        $params['content'] = $str;
 //        $data = $dataoke->request($params);
 
-        $url = $url . '?' . http_build_query($data);
+        $url = $url . '?' . http_build_query($data) . '&content=' . $str;
         Log::info('url:' . $url);
         $data = $this->requestUrl($url);
         return $data;
