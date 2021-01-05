@@ -137,7 +137,7 @@ class ApiController extends Controller
 
         $dataoke = new Api(env('TAOKOULING_API_KEY'),env('TAOKOULING_API_SECRET'),'v1.0.0');
 
-        $data = $dataoke->request('api/tb-service/parse-taokouling ',['content'=>$str]);
+        $data = $dataoke->request('tb-service/parse-taokouling ',['content'=>$str]);
 //        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
 //        $url = $url . '?' . http_build_query($data);
 //        $res = $this->requestUrl($url);
