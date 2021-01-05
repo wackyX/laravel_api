@@ -118,7 +118,7 @@ class ApiController extends Controller
         $req->setItemId($res);
         $resp = $quan->execute($req);
 
-        Log::info($resp);
+        Log::info('resp'.$resp);
         return $res;
     }
 
