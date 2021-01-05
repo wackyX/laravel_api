@@ -4,11 +4,12 @@
 namespace App\Http\Controllers;
 
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-use Justmd5\DaTaoKe\Api;
-use Justmd5\DaTaoKe\DaTaoKe;
-use Psy\Util\Str;
+use App\lib\taobaosdk\TopSdk;
+
+require('app\lib\taobaosdk\TopSdk.php');
 
 class ApiController extends Controller
 {
@@ -112,6 +113,14 @@ class ApiController extends Controller
         $str = $postObj->Content;
         $res = $this->taokouling($str);
 
+        $quan = new \TopClient();
+        $quan->appkey = 32181173;
+        $quan->secretKey = '49183620ee73c3e45c2dc39fd5945c89';
+        $req = new \TbkItemInfoGetRequest();
+        $req->setNumIids($res);
+        $resp = $quan->execute($req);
+
+        Log::info($resp);
         return $res;
     }
 
