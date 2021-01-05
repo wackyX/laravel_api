@@ -129,23 +129,26 @@ class ApiController extends Controller
     public function taokouling($str)
     {
         $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
+        $time = microtime();
         $data = [
             'content' => $str,
             'version' => 'v1.0.0',
             'appKey'  => env('TAOKOULING_API_KEY'),
+            'nonce'   => 123456,
+            'timer'   => $time
         ];
-        $dataoke = new \CheckSign();
-        Log::info('aaaaa');
-        $dataoke->host = $url;
-        $dataoke->appKey = env('TAOKOULING_API_KEY');
-        $dataoke->appSecret = env('TAOKOULING_API_SECRET');
-        $dataoke->version = 'v1.0.0';
-        $params = array();
-        $params['content'] = $str;
-        $data = $dataoke->request($params);
-//        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
-//        $url = $url . '?' . http_build_query($data);
-//        $res = $this->requestUrl($url);
+//        $dataoke = new \CheckSign();
+//        Log::info('aaaaa');
+//        $dataoke->host = $url;
+//        $dataoke->appKey = env('TAOKOULING_API_KEY');
+//        $dataoke->appSecret = env('TAOKOULING_API_SECRET');
+//        $dataoke->version = 'v1.0.0';
+//        $params = array();
+//        $params['content'] = $str;
+//        $data = $dataoke->request($params);
+
+        $url = $url . http_build_query($data);
+        Log::info('url:' . $url);
         return $data;
     }
 
@@ -179,16 +182,11 @@ class ApiController extends Controller
     }
 
 
-    private function makeSignDataoke($data, $appSecret)
+    private function makeSignDataoke($appKey, $appSecret, $nonce, $timer)
     {
-        ksort($data);
-        $str = '';
-        foreach ($data as $k => $v) {
 
-            $str .= '&' . $k . '=' . $v;
-        }
-        $str = trim($str, '&');
-        $sign = strtoupper(md5($str . '&key=' . $appSecret));
+        $str = 'appKey=' . $appKey . '&timer=' . $timer . '&nonce=' . $nonce . '&key=' . $appSecret;
+        $sign = strtoupper(md5($str));
         return $sign;
     }
 }
