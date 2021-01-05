@@ -110,10 +110,9 @@ class ApiController extends Controller
     {
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
-        Log::info($str);
         $res = $this->taokouling($str);
-        Log::info($res);
-        return $str;
+
+        return $res;
     }
 
     private function receiveEvent($postObj)
