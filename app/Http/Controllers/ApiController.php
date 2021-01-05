@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use App\lib\taobaosdk\TopSdk;
 
-require('app\lib\taobaosdk\TopSdk.php');
+require('App\lib\taobaosdk\TopSdk.php');
 
 class ApiController extends Controller
 {
