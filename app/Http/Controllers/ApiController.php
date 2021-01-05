@@ -115,7 +115,7 @@ class ApiController extends Controller
         $quan->appkey = 32181173;
         $quan->secretKey = '49183620ee73c3e45c2dc39fd5945c89';
         $req = new \TbkItemInfoGetRequest();
-        $req->setItemId($res);
+        $req->setNumIids($res);
         $resp = $quan->execute($req);
 
         Log::info('resp'.$resp);
