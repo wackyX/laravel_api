@@ -117,6 +117,9 @@ class ApiController extends Controller
         $req = new \TbkItemInfoGetRequest();
         $req->setNumIids($res);
         $resp = $quan->execute($req);
+        if (!$resp){
+            return '没有优惠券';
+        }
 
         Log::info('resp'.$resp);
         return $res;
