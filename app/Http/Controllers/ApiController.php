@@ -183,7 +183,7 @@ class ApiController extends Controller
         }
         $params['sign'] = $this->signature($params);
         $extUrl = rtrim(str_replace('.', '/', $method), '/');
-        $response = call_user_func_array([$http, 'get'], [sprintf('%s/%s', self::URL, $extUrl), $params, $files]);
+        $response = call_user_func_array([$http, 'get'], [sprintf('%s/%s', 'https://openapi.dataoke.com/api', $extUrl), $params, $files]);
 
         return json_decode(strval($response->getBody()), true);
     }
