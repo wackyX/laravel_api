@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Redis;
 use Justmd5\DaTaoKe\Api;
 use Justmd5\DaTaoKe\DaTaoKe;
 use Psy\Util\Str;
-use App\lib\PHPSDK\ApiSdk;
 
 class ApiController extends Controller
 {
