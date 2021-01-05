@@ -7,9 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-use App\lib\taobaosdk\TopSdk;
 
-require('App\lib\taobaosdk\TopSdk.php');
 
 class ApiController extends Controller
 {
