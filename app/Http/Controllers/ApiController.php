@@ -15,6 +15,7 @@ class ApiController extends Controller
     private $appId = 'wx478e8fc2f38ea123';
     private $appSecret = 'dd5e5f2a2b809fcc46976605f715d43e';
 
+
     public function test()
     {
         Log::info('123');
@@ -135,9 +136,8 @@ class ApiController extends Controller
             'appKey'  => env('TAOKOULING_API_KEY'),
         ];
 
-        $dataoke = new Api(env('TAOKOULING_API_KEY'),env('TAOKOULING_API_SECRET'),'v1.0.0');
         Log::info('aaaaa');
-        $data = $dataoke->request('tb-service/parse-taokouling ',['content'=>$str]);
+        $data = $this->request('tb-service/parse-taokouling ',['content'=>$str]);
 //        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
 //        $url = $url . '?' . http_build_query($data);
 //        $res = $this->requestUrl($url);
@@ -173,48 +173,34 @@ class ApiController extends Controller
         return $data;
     }
 
-    public function strCutByStr(&$str, $findStart, $findEnd = false, $encoding = 'utf-8')
+    public function request($method, $params, $files = [])
     {
-        if (is_array($findStart)) {
-            if (count($findStart) === count($findEnd)) {
-                foreach ($findStart as $k => $v) {
-                    if (($result = strCutByStr($str, $v, $findEnd[$k], $encoding)) !== false) {
-                        return $result;
-                    }
-                }
-                return false;
-            } else {
-                return false;
-            }
+        $http = $this->getHttp();
+
+        $params['appKey'] = env('TAOKOULING_API_KEY');
+        if (!isset($params['version'])) {
+            $params['version'] = isset($this->version) ? $this->version : 'v1.1.1';
         }
+        $params['sign'] = $this->signature($params);
+        $extUrl = rtrim(str_replace('.', '/', $method), '/');
+        $response = call_user_func_array([$http, 'get'], [sprintf('%s/%s', self::URL, $extUrl), $params, $files]);
 
-        if (($start = mb_strpos($str, $findStart, 0, $encoding)) === false) {
-            return false;
-        }
-
-        $start += mb_strlen($findStart, $encoding);
-
-        if ($findEnd === false) {
-            return mb_substr($str, $start, NULL, $encoding);
-        }
-
-        if (($length = mb_strpos($str, $findEnd, $start, $encoding)) === false) {
-            return false;
-        }
-
-        return mb_substr($str, $start, $length - $start, $encoding);
+        return json_decode(strval($response->getBody()), true);
     }
 
-    private function makeSignDataoke($data, $appSecret)
+    private function signature($params)
     {
-        ksort($data);
-        $str = '';
-        foreach ($data as $k => $v) {
+        ksort($params);
 
-            $str .= '&' . $k . '=' . $v;
+        $sign = '';
+        foreach ($params as $k => $v) {
+
+            $sign .= '&' . $k . '=' . $v;
         }
-        $str = trim($str, '&');
-        $sign = strtoupper(md5($str . '&key=' . $appSecret));
-        return $sign;
+        $sign = trim($sign, '&');
+
+        return strtoupper(md5($sign . '&key=' . env('TAOKOULING_API_SECRET')));
     }
+
+
 }
