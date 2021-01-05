@@ -134,7 +134,7 @@ class ApiController extends Controller
 
     public function taokouling($str)
     {
-        $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
+        $url = 'https://openapi.dataoke.com/api/tb-service/parse-content';
         $data = [
             'content' => $str,
             'version' => 'v1.0.0',
@@ -143,7 +143,7 @@ class ApiController extends Controller
         $this->host = $url;
         $this->dataokeKey = env('TAOKOULING_API_KEY');
         $this->dataokeSecret = env('TAOKOULING_API_SECRET');
-        $this->version = 'v1.1.1';
+        $this->version = 'v1.0.0';
         $params = [ 'content' => $str ];
         $data = $this->request($params);
 //        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
