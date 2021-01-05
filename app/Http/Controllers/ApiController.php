@@ -110,7 +110,7 @@ class ApiController extends Controller
     {
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
-
+        Log::info($str);
         $res = $this->taokouling($str);
         Log::info($res);
         return $str;
@@ -149,7 +149,7 @@ class ApiController extends Controller
 //        $params['content'] = $str;
 //        $data = $dataoke->request($params);
 
-        $url = $url . http_build_query($data);
+        $url = $url .'?'. http_build_query($data);
         Log::info('url:' . $url);
         $data = $this->requestUrl($url);
         return $data;
