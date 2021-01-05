@@ -151,6 +151,7 @@ class ApiController extends Controller
 
         $url = $url . http_build_query($data);
         Log::info('url:' . $url);
+        $data = $this->requestUrl($url);
         return $data;
     }
 
