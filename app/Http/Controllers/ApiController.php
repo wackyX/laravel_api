@@ -114,8 +114,8 @@ class ApiController extends Controller
         $quan = new \TopClient();
         $quan->appkey = 32181173;
         $quan->secretKey = '49183620ee73c3e45c2dc39fd5945c89';
-        $req = new \TbkItemInfoGetRequest();
-        $req->setNumIids($res);
+        $req = new \TbkCouponGetRequest();
+        $req->setItemId($res);
         $resp = $quan->execute($req);
 
         Log::info($resp);
