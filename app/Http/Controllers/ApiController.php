@@ -138,7 +138,7 @@ class ApiController extends Controller
             'timer'   => $time
         ];
         $sign = $this->makeSignDataoke(env('TAOKOULING_API_KEY'), env('TAOKOULING_API_SECRET'), 123456, $time);
-        $data['sign'] = $sign;
+        $data['signRan'] = $sign;
 //        $dataoke = new \CheckSign();
 //        Log::info('aaaaa');
 //        $dataoke->host = $url;
