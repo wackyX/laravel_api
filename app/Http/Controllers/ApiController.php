@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use Justmd5\DaTaoKe\Api;
 use Psy\Util\Str;
 use App\lib\PHPSDK\ApiSdk;
 
@@ -133,10 +134,14 @@ class ApiController extends Controller
             'version' => 'v1.0.0',
             'appKey'  => env('TAOKOULING_API_KEY'),
         ];
-        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
-        $url = $url . '?' . http_build_query($data);
-        $res = $this->requestUrl($url);
-        return $res;
+
+        $dataoke = new Api(env('TAOKOULING_API_KEY'),env('TAOKOULING_API_SECRET'),'v1.0.0');
+
+        $data = $dataoke->request('api/tb-service/parse-taokouling ',['content'=>$str]);
+//        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
+//        $url = $url . '?' . http_build_query($data);
+//        $res = $this->requestUrl($url);
+        return $data;
     }
 
     public function requestUrl($url, $flag = 0, $type = 0, $post_data = array(), $headers = array())
