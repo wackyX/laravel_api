@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Justmd5\DaTaoKe\Api;
+use Justmd5\DaTaoKe\DaTaoKe;
 use Psy\Util\Str;
 use App\lib\PHPSDK\ApiSdk;
 
@@ -14,7 +15,6 @@ class ApiController extends Controller
 {
     private $appId = 'wx478e8fc2f38ea123';
     private $appSecret = 'dd5e5f2a2b809fcc46976605f715d43e';
-
 
     public function test()
     {
@@ -136,8 +136,9 @@ class ApiController extends Controller
             'appKey'  => env('TAOKOULING_API_KEY'),
         ];
 
+        $dataoke = new DaTaoKe(env('TAOKOULING_API_KEY'),env('TAOKOULING_API_SECRET'),'v1.0.0');
         Log::info('aaaaa');
-        $data = $this->request('tb-service/parse-taokouling ',['content'=>$str]);
+        $data = $dataoke->request('tb-service/parse-taokouling ',['content'=>$str]);
 //        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
 //        $url = $url . '?' . http_build_query($data);
 //        $res = $this->requestUrl($url);
@@ -173,34 +174,48 @@ class ApiController extends Controller
         return $data;
     }
 
-    public function request($method, $params, $files = [])
+    public function strCutByStr(&$str, $findStart, $findEnd = false, $encoding = 'utf-8')
     {
-        $http = $this->getHttp();
-
-        $params['appKey'] = env('TAOKOULING_API_KEY');
-        if (!isset($params['version'])) {
-            $params['version'] = isset($this->version) ? $this->version : 'v1.1.1';
+        if (is_array($findStart)) {
+            if (count($findStart) === count($findEnd)) {
+                foreach ($findStart as $k => $v) {
+                    if (($result = strCutByStr($str, $v, $findEnd[$k], $encoding)) !== false) {
+                        return $result;
+                    }
+                }
+                return false;
+            } else {
+                return false;
+            }
         }
-        $params['sign'] = $this->signature($params);
-        $extUrl = rtrim(str_replace('.', '/', $method), '/');
-        $response = call_user_func_array([$http, 'get'], [sprintf('%s/%s', 'https://openapi.dataoke.com/api', $extUrl), $params, $files]);
 
-        return json_decode(strval($response->getBody()), true);
+        if (($start = mb_strpos($str, $findStart, 0, $encoding)) === false) {
+            return false;
+        }
+
+        $start += mb_strlen($findStart, $encoding);
+
+        if ($findEnd === false) {
+            return mb_substr($str, $start, NULL, $encoding);
+        }
+
+        if (($length = mb_strpos($str, $findEnd, $start, $encoding)) === false) {
+            return false;
+        }
+
+        return mb_substr($str, $start, $length - $start, $encoding);
     }
 
-    private function signature($params)
+    private function makeSignDataoke($data, $appSecret)
     {
-        ksort($params);
+        ksort($data);
+        $str = '';
+        foreach ($data as $k => $v) {
 
-        $sign = '';
-        foreach ($params as $k => $v) {
-
-            $sign .= '&' . $k . '=' . $v;
+            $str .= '&' . $k . '=' . $v;
         }
-        $sign = trim($sign, '&');
-
-        return strtoupper(md5($sign . '&key=' . env('TAOKOULING_API_SECRET')));
+        $str = trim($str, '&');
+        $sign = strtoupper(md5($str . '&key=' . $appSecret));
+        return $sign;
     }
-
-
 }
