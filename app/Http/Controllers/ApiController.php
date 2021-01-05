@@ -110,7 +110,7 @@ class ApiController extends Controller
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
         $res = $this->taokouling($str);
-
+        Log::info($res);
         $quan = new \TopClient();
         $quan->appkey = 32181173;
         $quan->secretKey = '49183620ee73c3e45c2dc39fd5945c89';
@@ -157,7 +157,7 @@ class ApiController extends Controller
         $url = $url . '?' . http_build_query($data) . '&content=' . $str;
         Log::info('url:' . $url);
         $data = $this->requestUrl($url);
-        return $data['data']['goodsId'];
+        return $data['data'];
     }
 
     public function requestUrl($url, $flag = 0, $type = 0, $post_data = array(), $headers = array())
