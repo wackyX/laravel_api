@@ -136,7 +136,7 @@ class ApiController extends Controller
             'appKey'  => env('TAOKOULING_API_KEY'),
         ];
 
-        $dataoke = new Api(env('TAOKOULING_API_KEY'),env('TAOKOULING_API_SECRET'),'v1.0.0');
+        $dataoke = new DaTaoKe(env('TAOKOULING_API_KEY'),env('TAOKOULING_API_SECRET'),'v1.0.0');
         Log::info('aaaaa');
         $data = $dataoke->request('tb-service/parse-taokouling ',['content'=>$str]);
 //        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
