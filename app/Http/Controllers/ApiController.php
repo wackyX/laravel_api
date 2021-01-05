@@ -143,7 +143,7 @@ class ApiController extends Controller
         $this->host = $url;
         $this->dataokeKey = env('TAOKOULING_API_KEY');
         $this->dataokeSecret = env('TAOKOULING_API_SECRET');
-        $this->version = 'v1.0.0';
+        $this->version = 'v1.1.1';
         $params = [ 'content' => $str ];
         $data = $this->request($params);
 //        $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
