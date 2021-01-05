@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Psy\Util\Str;
+use App\lib\PHPSDK\ApiSdk;
 
 class ApiController extends Controller
 {
@@ -22,7 +23,6 @@ class ApiController extends Controller
     public function checkToken()
     {
         header("Content-type: text/html; charset=utf-8");
-        Log::info('32');
         //1.将timestamp,nonce,toke按字典顺序排序
         $timestamp = $_GET['timestamp'];
         $nonce = $_GET['nonce'];
@@ -129,10 +129,9 @@ class ApiController extends Controller
     {
         $url = 'https://openapi.dataoke.com/api/tb-service/parse-taokouling';
         $data = [
-            'appKey'  => env('TAOKOULING_API_KEY'),
             'content' => $str,
             'version' => 'v1.0.0',
-
+            'appKey'  => env('TAOKOULING_API_KEY'),
         ];
         $data['sign'] = $this->makeSignDataoke($data, env('TAOKOULING_API_SECRET'));
         $url = $url . '?' . http_build_query($data);
