@@ -109,7 +109,7 @@ class ApiController extends Controller
     {
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
-        $res = $this->taokouling($str);
+        $res = json_encode($this->taokouling($str));
         Log::info($res);
         $quan = new \TopClient();
         $quan->appkey = 32181173;
