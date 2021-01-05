@@ -134,7 +134,7 @@ class ApiController extends Controller
             'version' => 'v1.0.0',
             'appKey'  => env('TAOKOULING_API_KEY'),
         ];
-
+        include "ApiSdk.php";
         $dataoke = new \CheckSign();
         Log::info('aaaaa');
         $dataoke->host($url);
