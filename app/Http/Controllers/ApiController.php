@@ -114,7 +114,7 @@ class ApiController extends Controller
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
         $res = $this->taokouling($str)['goodsId'];
-
+        Log::info(json_encode($res));
         $res = $this->dataokeGoodsDetail($res);
 
         if (isset($res['couponLink']) && $res['couponLink']) {
