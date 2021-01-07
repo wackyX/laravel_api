@@ -31,8 +31,9 @@ class test extends Command
     public function handle()
     {
         $client = Factory::taobao();
-        $req = new TbkItemCouponGetRequest();
-        $req->set("610769309342");
+        $req = new TbkCouponGetRequest();
+        $req->setItemId("610769309342");
+        $req->setActivityId("8c2bf9951b7a448182eaf89ae4fe2115");
         dd($client->execute($req));
 
     }

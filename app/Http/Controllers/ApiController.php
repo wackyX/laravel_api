@@ -7,6 +7,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use NiuGengYun\EasyTBK\Factory;
+use NiuGengYun\EasyTBK\TaoBao\Request\TbkCouponGetRequest;
+use NiuGengYun\EasyTBK\TaoBao\Request\TbkTpwdConvertRequest;
+use NiuGengYun\EasyTBK\TaoBao\Request\TbkTpwdCreateRequest;
 
 
 class ApiController extends Controller
@@ -111,12 +115,22 @@ class ApiController extends Controller
         $str = $postObj->Content;
         $res = $this->taokouling($str)['goodsId'];
 
-        $res = json_encode($this->dataokeGoodsDetail($res));
+        $res = $this->dataokeGoodsDetail($res);
 
-        Log::info($res);
+        if (isset($res['couponLink']) && $res['couponLink']) {
+            $client = Factory::taobao();
+            $req = new TbkTpwdCreateRequest();
+            $req->setText("复制内容淘宝打开");
+            $req->setUrl($res['couponLink']);
+            $data = $client->execute($req);
+
+            return $data['password_simple'];
+        } else {
+            return '没有优惠券';
+        }
 
 
-        return $res;
+
     }
 
     private function receiveEvent($postObj)
@@ -186,7 +200,8 @@ class ApiController extends Controller
         return $data;
     }
 
-    public function dataokeGoodsDetail($id){
+    public function dataokeGoodsDetail($id)
+    {
         $url = 'https://openapi.dataoke.com/api/goods/get-goods-details';
         $time = time() * 1000;
         $data = [
