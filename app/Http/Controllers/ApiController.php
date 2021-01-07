@@ -113,7 +113,7 @@ class ApiController extends Controller
 
         $res = json_encode($this->dataokeGoodsDetail($res));
 
-
+        Log::info($res);
 
 
         return $res;
