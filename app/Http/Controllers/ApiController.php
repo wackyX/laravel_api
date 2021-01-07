@@ -123,7 +123,7 @@ class ApiController extends Controller
             $req->setText("复制内容淘宝打开");
             $req->setUrl($res['couponLink']);
             $data = $client->execute($req);
-
+            Log::info(json_encode($data));
             return $data['password_simple'];
         } else {
             return '没有优惠券';
