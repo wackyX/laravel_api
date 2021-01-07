@@ -113,7 +113,11 @@ class ApiController extends Controller
     {
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
+
         $res = $this->taokouling($str)['goodsId'];
+        if (!$res) {
+            return '没有优惠券';
+        }
         Log::info(json_encode($res));
         $res = $this->dataokeGoodsDetail($res);
 
@@ -128,7 +132,6 @@ class ApiController extends Controller
         } else {
             return '没有优惠券';
         }
-
 
 
     }
