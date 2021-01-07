@@ -121,7 +121,10 @@ class ApiController extends Controller
         Log::info(json_encode($res));
         $res = $this->dataokeGoodsDetail($res);
 
-        if (isset($res['couponLink']) && $res['couponLink']) {
+        if (isset($res['couponLink']) && $res['couponLink'] && strtotime($res['couponEndTime']) > time()) {
+
+            // todo check date
+
             $client = Factory::taobao();
             $req = new TbkTpwdCreateRequest();
             $req->setText("复制内容淘宝打开");
