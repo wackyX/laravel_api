@@ -124,7 +124,7 @@ class ApiController extends Controller
             $req->setUrl($res['couponLink']);
             $data = $client->execute($req);
 
-            return $data->data->model;
+            return $data->data->password_simple;
         } else {
             return '没有优惠券';
         }
