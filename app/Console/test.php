@@ -4,7 +4,6 @@
 namespace App\Console;
 
 
-
 use NiuGengYun\EasyTBK\Factory;
 use Illuminate\Console\Command;
 use NiuGengYun\EasyTBK\TaoBao\Request\TbkContentGetRequest;
@@ -23,7 +22,6 @@ class test extends Command
     protected $signature = 'test';
 
 
-
     public function __construct()
     {
         parent::__construct();
@@ -36,6 +34,6 @@ class test extends Command
         $req->setText("复制内容淘宝打开");
         $req->setUrl("https://uland.taobao.com/quan/detail?sellerId=1669558588&activityId=8c2bf9951b7a448182eaf89ae4fe2115");
         $data = $client->execute($req);
-dd($data->data);
+        dd($data->data->model);
     }
 }
