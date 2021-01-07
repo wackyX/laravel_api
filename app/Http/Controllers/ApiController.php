@@ -111,17 +111,9 @@ class ApiController extends Controller
         $str = $postObj->Content;
         $res = json_encode($this->taokouling($str));
         Log::info($res);
-        $quan = new \TopClient();
-        $quan->appkey = 32181173;
-        $quan->secretKey = '49183620ee73c3e45c2dc39fd5945c89';
-        $req = new \TbkItemInfoGetRequest();
-        $req->setNumIids($res);
-        $resp = $quan->execute($req);
-        if (!$resp){
-            return '没有优惠券';
-        }
 
-        Log::info('resp'.$resp);
+
+
         return $res;
     }
 
@@ -192,6 +184,21 @@ class ApiController extends Controller
         return $data;
     }
 
+    public function dataokeGoodsDetail($id){
+        $url = 'https://openapi.dataoke.com/api/goods/get-goods-details';
+        $time = time() * 1000;
+        $data = [
+            'version' => 'v1.2.3',
+            'appKey'  => env('TAOKOULING_API_KEY'),
+            'nonce'   => 123456,
+            'timer'   => $time
+        ];
+        $sign = $this->makeSignDataoke(env('TAOKOULING_API_KEY'), env('TAOKOULING_API_SECRET'), 123456, $time);
+        $data['signRan'] = $sign;
+        $url = $url . '?' . http_build_query($data) . '&goodsId=' . $id;
+        $data = $this->requestUrl($url);
+        return $data['data'];
+    }
 
     private function makeSignDataoke($appKey, $appSecret, $nonce, $timer)
     {
