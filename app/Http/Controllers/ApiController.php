@@ -109,8 +109,8 @@ class ApiController extends Controller
     {
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
-        $res = json_encode($this->taokouling($str));
-        Log::info($res);
+        $res = $this->taokouling($str)['goodsId'];
+
 
 
 
