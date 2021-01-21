@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use NiuGengYun\EasyTBK\Factory;
 use NiuGengYun\EasyTBK\TaoBao\Request\TbkCouponGetRequest;
+use NiuGengYun\EasyTBK\TaoBao\Request\TbkDgMaterialOptionalRequest;
 use NiuGengYun\EasyTBK\TaoBao\Request\TbkTpwdConvertRequest;
 use NiuGengYun\EasyTBK\TaoBao\Request\TbkTpwdCreateRequest;
 
@@ -114,11 +115,15 @@ class ApiController extends Controller
         $postObj->Content = trim($postObj->Content);
         $str = $postObj->Content;
 
-        $res = $this->taokouling($str)['goodsId'];
+        $res = $this->taokouling($str);
+        Log::info(json_encode($res));
         if (!$res) {
             return '没有优惠券';
         }
-        Log::info(json_encode($res));
+        $res= $res['goodsId'];
+
+
+
         $res = $this->dataokeGoodsDetail($res);
 
         if (isset($res['couponLink']) && $res['couponLink'] && strtotime($res['couponEndTime']) > time()) {
@@ -174,6 +179,7 @@ class ApiController extends Controller
         $url = $url . '?' . http_build_query($data) . '&content=' . $str;
         Log::info('url:' . $url);
         $data = $this->requestUrl($url);
+
         return $data['data'];
     }
 
@@ -229,5 +235,15 @@ class ApiController extends Controller
         $str = 'appKey=' . $appKey . '&timer=' . $timer . '&nonce=' . $nonce . '&key=' . $appSecret;
         $sign = strtoupper(md5($str));
         return $sign;
+    }
+
+
+    private function quanSelect($str){
+        $client = Factory::taobao();
+        $req = new TbkDgMaterialOptionalRequest();
+        $req->setQ($str);
+        $req->setAdzoneId('mm_1056860041_2202750454_111152500099');
+        $data = $client->execute($req);
+        dd($data->data->model);
     }
 }
