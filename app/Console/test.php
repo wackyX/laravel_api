@@ -33,7 +33,7 @@ class test extends Command
         $client = Factory::taobao();
         $req = new TbkDgMaterialOptionalRequest();
         $req->setQ('狗狗零食磨牙棒耐咬除口臭补钙幼犬泰迪大型犬金毛拉布拉多牛骨棒');
-        $req->setAdzoneId(111152500099);
+        $req->setAdzoneId('111152500099');
         $data = $client->execute($req);
         dd($data);
     }
