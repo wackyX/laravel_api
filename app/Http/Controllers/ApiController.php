@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
@@ -76,7 +77,6 @@ class ApiController extends Controller
                 }
                 // 唤起事件
                 // event(new WxOperateEvent($postObj));
-                Log::info($RX_TYPE);
                 switch ($RX_TYPE) {
                     case "text":
                         $resultStr = $this->receiveText($postObj);
@@ -117,31 +117,22 @@ class ApiController extends Controller
 
         $res = $this->taokouling($str);
         $goodId = $res['goodsId'];
-        $res = $this->getShopName($goodId);
-        $shopName = $res['shopName'];
-        $res = $this->quanSelect($str);
-        Log::info($res);
 
+        $res = $this->getShopName($goodId);
+
+        $goodName = $res['title'];
+        $shopName = $res['shopName'];
+        $couponId = $this->quanSelect($goodName, $shopName);
+
+        $couponId= $this->getActivity($goodId, $couponId);
+        Log::info('goodId' . $goodId . 'couponId' . $couponId);
         if (!$res) {
             return '没有优惠券';
         }
-        $res= $res['goodsId'];
 
-
-
-        $res = $this->dataokeGoodsDetail($res);
-
-        if (isset($res['couponLink']) && $res['couponLink'] && strtotime($res['couponEndTime']) > time()) {
-
-            // todo check date
-
-            $client = Factory::taobao();
-            $req = new TbkTpwdCreateRequest();
-            $req->setText("复制内容淘宝打开");
-            $req->setUrl($res['couponLink']);
-            $data = $client->execute($req);
-
-            return $data->data->password_simple;
+        $link = $this->zhuanlian($goodId, $couponId);
+        if ($link) {
+            return $link;
         } else {
             return '没有优惠券';
         }
@@ -182,7 +173,6 @@ class ApiController extends Controller
 //        $data = $dataoke->request($params);
 
         $url = $url . '?' . http_build_query($data) . '&content=' . $str;
-        Log::info('url:' . $url);
         $data = $this->requestUrl($url);
 
         return $data['data'];
@@ -243,17 +233,26 @@ class ApiController extends Controller
     }
 
 
-    private function quanSelect($str){
+    private function quanSelect($str, $shopName)
+    {
         $client = Factory::taobao();
         $req = new TbkDgMaterialOptionalRequest();
         $req->setQ($str);
         $req->setAdzoneId('111152500099');
-        $req->setPageSize(100);
+        $req->setPageSize('100');
+        $req->setHasCoupon('true');
         $data = $client->execute($req);
-        return $data;
+
+        foreach ($data->result_list->map_data as $v) {
+            if ($v->shop_title == $shopName) {
+                return $v->coupon_id;
+            }
+        }
+        return false;
     }
 
-    private function getShopId($goodId){
+    private function getShopName($goodId)
+    {
         $url = 'https://openapi.dataoke.com/api/goods/get-goods-details';
         $time = time() * 1000;
         $data = [
@@ -279,5 +278,45 @@ class ApiController extends Controller
         $data = $this->requestUrl($url);
 
         return $data['data'];
+    }
+
+    private function getActivity($goodId, $couponId)
+    {
+        $client = Factory::taobao();
+        $req = new TbkCouponGetRequest();
+        $req->setItemId($goodId);
+        $req->setActivityId($couponId);
+        $data = $client->execute($req);
+        Log::info('log'.json_encode($data));
+        return $data->data->coupon_activity_id;
+
+    }
+
+    private function zhuanlian($goodId, $couponId)
+    {
+        $url = 'https://openapi.dataoke.com/api/tb-service/get-privilege-link';
+        $time = time() * 1000;
+        $data = [
+            'version' => 'v1.3.1',
+            'appKey'  => env('TAOKOULING_API_KEY'),
+            'nonce'   => 123456,
+            'timer'   => $time
+        ];
+        $sign = $this->makeSignDataoke(env('TAOKOULING_API_KEY'), env('TAOKOULING_API_SECRET'), 123456, $time);
+        $data['signRan'] = $sign;
+//        $dataoke = new \CheckSign();
+//        Log::info('aaaaa');
+//        $dataoke->host = $url;
+//        $dataoke->appKey = env('TAOKOULING_API_KEY');
+//        $dataoke->appSecret = env('TAOKOULING_API_SECRET');
+//        $dataoke->version = 'v1.0.0';
+//        $params = array();
+//        $params['content'] = $str;
+//        $data = $dataoke->request($params);
+
+        $url = $url . '?' . http_build_query($data) . '&goodsId=' . $goodId . '&couponId=' . $couponId;
+        $data = $this->requestUrl($url);
+
+        return $data['data']['tpwd'];
     }
 }
