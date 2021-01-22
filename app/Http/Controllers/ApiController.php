@@ -116,6 +116,8 @@ class ApiController extends Controller
         $str = $postObj->Content;
 
         $res = $this->taokouling($str);
+        $goodId = $res['goodsId'];
+        $res = $this->getShopId($goodId);
         Log::info(json_encode($res));
         if (!$res) {
             return '没有优惠券';
@@ -245,5 +247,33 @@ class ApiController extends Controller
         $req->setAdzoneId('mm_1056860041_2202750454_111152500099');
         $data = $client->execute($req);
         dd($data->data->model);
+    }
+
+    private function getShopId($goodId){
+        $url = 'https://openapi.dataoke.com/api/goods/get-goods-details';
+        $time = time() * 1000;
+        $data = [
+            'version' => 'v1.2.3',
+            'appKey'  => env('TAOKOULING_API_KEY'),
+            'nonce'   => 123456,
+            'timer'   => $time
+        ];
+        $sign = $this->makeSignDataoke(env('TAOKOULING_API_KEY'), env('TAOKOULING_API_SECRET'), 123456, $time);
+        $data['signRan'] = $sign;
+//        $dataoke = new \CheckSign();
+//        Log::info('aaaaa');
+//        $dataoke->host = $url;
+//        $dataoke->appKey = env('TAOKOULING_API_KEY');
+//        $dataoke->appSecret = env('TAOKOULING_API_SECRET');
+//        $dataoke->version = 'v1.0.0';
+//        $params = array();
+//        $params['content'] = $str;
+//        $data = $dataoke->request($params);
+
+        $url = $url . '?' . http_build_query($data) . '&goodsId=' . $goodId;
+        Log::info('url:' . $url);
+        $data = $this->requestUrl($url);
+
+        return $data['data'];
     }
 }
