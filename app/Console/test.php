@@ -4,6 +4,7 @@
 namespace App\Console;
 
 
+use App\lib\extendApi\TbkDgMaterialOptopnalRequestNew;
 use NiuGengYun\EasyTBK\Factory;
 use Illuminate\Console\Command;
 use NiuGengYun\EasyTBK\TaoBao\Request\TbkContentGetRequest;
@@ -31,9 +32,10 @@ class test extends Command
     public function handle()
     {
         $client = Factory::taobao();
-        $req = new TbkDgMaterialOptionalRequest();
+        $req = new TbkDgMaterialOptopnalRequestNew();
         $req->setQ('狗狗零食磨牙棒耐咬除口臭补钙幼犬泰迪大型犬金毛拉布拉多牛骨棒');
         $req->setAdzoneId('111152500099');
+        $req->setSellerId('2208513976441');
         $data = $client->execute($req);
         dd($data);
     }
