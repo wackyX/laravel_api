@@ -31,6 +31,7 @@ class test extends Command
 
     public function handle()
     {
+        111
         $client = Factory::taobao();
         $req = new TbkDgMaterialOptopnalRequestNew();
         $req->setQ('狗狗零食磨牙棒耐咬除口臭补钙幼犬泰迪大型犬金毛拉布拉多牛骨棒');

@@ -117,10 +117,10 @@ class ApiController extends Controller
 
         $res = $this->taokouling($str);
         $goodId = $res['goodsId'];
-        $res = $this->getShopId($goodId);
-        $shopId = $res['sellerId'];
-
-
+        $res = $this->getShopName($goodId);
+        $shopName = $res['shopName'];
+        $res = $this->quanSelect($str);
+        Log::info($res);
 
         if (!$res) {
             return '没有优惠券';
@@ -246,9 +246,11 @@ class ApiController extends Controller
     private function quanSelect($str){
         $client = Factory::taobao();
         $req = new TbkDgMaterialOptionalRequest();
-        $req->setQ('狗狗零食磨牙棒耐咬除口臭补钙幼犬泰迪大型犬金毛拉布拉多牛骨棒');
-        $req->setSellerIds();
+        $req->setQ($str);
         $req->setAdzoneId('111152500099');
+        $req->setPageSize(100);
+        $data = $client->execute($req);
+        return $data;
     }
 
     private function getShopId($goodId){
