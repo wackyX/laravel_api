@@ -32,20 +32,51 @@ class test extends Command
 
     public function handle()
     {
-        $url = 'https://openapi.dataoke.com/api/tb-service/get-privilege-link';
-        $time = time() * 1000;
-        $data = [
-            'version' => 'v1.3.1',
-            'appKey'  => env('TAOKOULING_API_KEY'),
-            'nonce'   => 123456,
-            'timer'   => $time
-        ];
-        $sign = $this->makeSignDataoke(env('TAOKOULING_API_KEY'), env('TAOKOULING_API_SECRET'), 123456, $time);
-        $data['signRan'] = $sign;
-        $url = $url . '?' . http_build_query($data) . '&goodsId=622076101827&couponId=a2c279d5ab0741b9897c3752c2db60da';
-        $data = $this->requestUrl($url);
+        $str = '柏万同款宠物';
+        $shopName = '柴犬柏万';
+        $page = 1;
 
-        dd($data['data']['tpwd']);
+        $this->get($str, $shopName, $page);
+    }
+
+    function get($str, $shopName, $page)
+    {
+        $i = 0;
+        $data = $this->qingqiu($str, $page, $i);
+
+        dd($data);
+        foreach ($data['result_list']['map_data'] as $v) {
+
+            if ($v['shop_title'] == $shopName) {
+                dd($v['coupon_id']);
+            }
+        }
+        if ($page * 100 < $data['total_results']) {
+            $page++;
+            $this->get($str, $shopName, $page);
+        } else {
+            dd('meiyou');
+        }
+    }
+
+    function qingqiu($str, $page, $i)
+    {
+        $client = Factory::taobao();
+        $req = new TbkDgMaterialOptionalRequest();
+        $req->setQ($str);
+        $req->setAdzoneId('111152500099');
+        $req->setPageSize('20');
+        $req->setHasCoupon('true');
+        $req->setPageNo($page);
+        $data = $client->execute($req);
+        $data = json_decode(json_encode($data), true);
+        if (isset($data['sub_code'])&&$data['sub_code'] == 50001 && $i < 3) {
+            $i++;
+            $this->qingqiu($str, $page, $i);
+        } else {
+            return $data;
+        }
+
     }
 
     private function makeSignDataoke($appKey, $appSecret, $nonce, $timer)

@@ -117,14 +117,22 @@ class ApiController extends Controller
 
         $res = $this->taokouling($str);
         $goodId = $res['goodsId'];
+        Log::info('good_id:' . $goodId);
 
         $res = $this->getShopName($goodId);
-
+        if (!$res) {
+            return '没有优惠券';
+        }
         $goodName = $res['title'];
         $shopName = $res['shopName'];
         $couponId = $this->quanSelect($goodName, $shopName);
-
-        $couponId= $this->getActivity($goodId, $couponId);
+        Log::info('goodName:' . $goodName);
+        Log::info('$shopName:' . $shopName);
+        Log::info('$couponId:' . $couponId);
+        if (!$couponId) {
+            return '没有优惠券';
+        }
+        $couponId = $this->getActivity($goodId, $couponId);
         Log::info('goodId' . $goodId . 'couponId' . $couponId);
         if (!$res) {
             return '没有优惠券';
@@ -145,7 +153,11 @@ class ApiController extends Controller
         $event = $postObj->Event;
         // 用户关注公众号 补全/注册用户信息,添加统计
         if ($event == 'subscribe') {
-            $str = '欢迎关注';
+            $str = '欢迎关注,跟我一起省钱
+长按淘宝商品标题，选择复制链接
+发送至公众号，
+复制返回的淘口令至淘宝
+领取优惠券。';
             return $str;
         }
     }
@@ -162,19 +174,10 @@ class ApiController extends Controller
         ];
         $sign = $this->makeSignDataoke(env('TAOKOULING_API_KEY'), env('TAOKOULING_API_SECRET'), 123456, $time);
         $data['signRan'] = $sign;
-//        $dataoke = new \CheckSign();
-//        Log::info('aaaaa');
-//        $dataoke->host = $url;
-//        $dataoke->appKey = env('TAOKOULING_API_KEY');
-//        $dataoke->appSecret = env('TAOKOULING_API_SECRET');
-//        $dataoke->version = 'v1.0.0';
-//        $params = array();
-//        $params['content'] = $str;
-//        $data = $dataoke->request($params);
-
         $url = $url . '?' . http_build_query($data) . '&content=' . $str;
         $data = $this->requestUrl($url);
-
+        Log::info('data:' . json_encode($data));
+        Log::info('taokouling_url:' . $url);
         return $data['data'];
     }
 
@@ -242,10 +245,14 @@ class ApiController extends Controller
         $req->setPageSize('100');
         $req->setHasCoupon('true');
         $data = $client->execute($req);
-
-        foreach ($data->result_list->map_data as $v) {
-            if ($v->shop_title == $shopName) {
-                return $v->coupon_id;
+        $data = json_decode(json_encode($data), true);
+        Log::info('quanselect' . json_encode($data));
+        if (!isset($data['result_list'])) {
+            return false;
+        }
+        foreach ($data['result_list']['map_data'] as $v) {
+            if ($v['shop_title'] == $shopName) {
+                return $v['coupon_id'];
             }
         }
         return false;
@@ -276,8 +283,13 @@ class ApiController extends Controller
         $url = $url . '?' . http_build_query($data) . '&goodsId=' . $goodId;
         Log::info('url:' . $url);
         $data = $this->requestUrl($url);
+        Log::info('getshopname' . json_encode($data));
+        if (isset($data['data'])) {
+            return $data['data'];
+        } else {
+            return false;
+        }
 
-        return $data['data'];
     }
 
     private function getActivity($goodId, $couponId)
@@ -287,7 +299,7 @@ class ApiController extends Controller
         $req->setItemId($goodId);
         $req->setActivityId($couponId);
         $data = $client->execute($req);
-        Log::info('log'.json_encode($data));
+        Log::info('log' . json_encode($data));
         return $data->data->coupon_activity_id;
 
     }
