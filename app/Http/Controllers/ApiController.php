@@ -140,7 +140,7 @@ class ApiController extends Controller
 
         $link = $this->zhuanlian($goodId, $couponId);
         if ($link) {
-            return $link;
+            return '恭喜找到了优惠券，复制这条信息至淘宝打开' . $link;
         } else {
             return '没有优惠券';
         }
