@@ -116,12 +116,16 @@ class ApiController extends Controller
         $str = $postObj->Content;
 
         $res = $this->taokouling($str);
+        if (!$res) {
+            return '很遗憾，没有找到优惠券';
+        }
         $goodId = $res['goodsId'];
         Log::info('good_id:' . $goodId);
 
         $res = $this->getShopName($goodId);
         if (!$res) {
-            return '没有优惠券';
+            return '虽然没有找到优惠券，但是复制链接打开也是对我的一种支持噢
+' . $this->zhuanlian($goodId);
         }
         $goodName = $res['title'];
         $shopName = $res['shopName'];
@@ -130,19 +134,22 @@ class ApiController extends Controller
         Log::info('$shopName:' . $shopName);
         Log::info('$couponId:' . $couponId);
         if (!$couponId) {
-            return '没有优惠券';
+            return '虽然没有找到优惠券，但是复制链接打开也是对我的一种支持噢
+' . $this->zhuanlian($goodId);
         }
         $couponId = $this->getActivity($goodId, $couponId);
         Log::info('goodId' . $goodId . 'couponId' . $couponId);
         if (!$res) {
-            return '没有优惠券';
+            return '虽然没有找到优惠券，但是复制链接打开也是对我的一种支持噢
+' . $this->zhuanlian($goodId);
         }
 
         $link = $this->zhuanlian($goodId, $couponId);
         if ($link) {
             return '恭喜找到了优惠券，复制这条信息至淘宝打开' . $link;
         } else {
-            return '没有优惠券';
+            return '虽然没有找到优惠券，但是复制链接打开也是对我的一种支持噢
+' . $this->zhuanlian($goodId);
         }
 
 
@@ -304,7 +311,7 @@ class ApiController extends Controller
 
     }
 
-    private function zhuanlian($goodId, $couponId)
+    private function zhuanlian($goodId, $couponId = '')
     {
         $url = 'https://openapi.dataoke.com/api/tb-service/get-privilege-link';
         $time = time() * 1000;
@@ -326,9 +333,14 @@ class ApiController extends Controller
 //        $params['content'] = $str;
 //        $data = $dataoke->request($params);
 
-        $url = $url . '?' . http_build_query($data) . '&goodsId=' . $goodId . '&couponId=' . $couponId;
+        $url = $url . '?' . http_build_query($data) . '&goodsId=' . $goodId;
+        if ($couponId) {
+            $url .= '&couponId=' . $couponId;
+        }
         $data = $this->requestUrl($url);
 
         return $data['data']['tpwd'];
     }
+
+
 }
